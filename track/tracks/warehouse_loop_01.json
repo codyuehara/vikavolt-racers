@@ -1,0 +1,216 @@
+{
+  "schema_version": "1.0.0",
+
+  "metadata": {
+    "id": "warehouse_loop_01",
+    "name": "Warehouse Loop",
+    "author": "your-name",
+    "description": "Six-gate loop with an elevated gate, a dive, a banked gate, a fan zone and light gusts."
+  },
+
+  "conventions": {
+    "units": "SI: meters, seconds, meters/second; angles in degrees",
+    "world_frame": "ENU, right-handed: x east, y north, z up; origin on the ground under the start gate",
+    "orientation": "rpy_deg = [roll, pitch, yaw], applied intrinsically as yaw (Z), then pitch (Y), then roll (X). Positive pitch tilts the local +x axis downward.",
+    "object_frame": "position is the geometric center of the shape (for gates: center of the opening)",
+    "gate_direction": "a gate must be flown through along its local +x axis"
+  },
+
+  "arena": {
+    "bounds_min": [-12.0, -6.0, 0.0],
+    "bounds_max": [26.0, 20.0, 8.0],
+    "out_of_bounds": "crash",
+    "ground": {
+      "height": 0.0,
+      "friction": 0.6,
+      "restitution": 0.1,
+      "visual_material": "concrete_floor"
+    }
+  },
+
+  "world_anchor": {
+    "_note": "Used only on real hardware: how this track frame maps into the mocap or VIO world frame.",
+    "frame_id": "mocap_world",
+    "position": [0.0, 0.0, 0.0],
+    "rpy_deg": [0.0, 0.0, 0.0]
+  },
+
+  "gate_types": {
+    "standard_1p5": {
+      "inner_width": 1.5,
+      "inner_height": 1.5,
+      "frame_width": 0.10,
+      "frame_depth": 0.05,
+      "trigger_depth": 1.0,
+      "stand_width": 0.10,
+      "visual_prefab": "gate_square_1p5"
+    },
+    "wide_2p0": {
+      "inner_width": 2.0,
+      "inner_height": 1.5,
+      "frame_width": 0.10,
+      "frame_depth": 0.05,
+      "trigger_depth": 1.0,
+      "stand_width": 0.10,
+      "visual_prefab": "gate_wide_2p0"
+    }
+  },
+
+  "gates": [
+    { "id": "G0", "type": "wide_2p0",     "position": [0.0, 0.0, 1.5],  "rpy_deg": [0.0, 0.0, 0.0],    "mount": "stand",   "role": "start_finish" },
+    { "id": "G1", "type": "standard_1p5", "position": [10.0, 2.0, 2.0], "rpy_deg": [0.0, 0.0, 20.0],   "mount": "stand" },
+    { "id": "G2", "type": "standard_1p5", "position": [18.0, 9.0, 3.0], "rpy_deg": [0.0, 0.0, 90.0],   "mount": "stand" },
+    { "id": "G3", "type": "standard_1p5", "position": [10.0, 15.0, 4.0],"rpy_deg": [0.0, 15.0, 180.0], "mount": "hanging" },
+    { "id": "G4", "type": "standard_1p5", "position": [2.0, 15.0, 1.2], "rpy_deg": [0.0, 0.0, 180.0],  "mount": "stand" },
+    { "id": "G5", "type": "standard_1p5", "position": [-6.0, 8.0, 2.0], "rpy_deg": [25.0, 0.0, 270.0], "mount": "stand" }
+  ],
+
+  "race": {
+    "laps": 3,
+    "gate_sequence": ["G0", "G1", "G2", "G3", "G4", "G5"],
+    "lap_complete_on": "G0",
+    "countdown_s": 3.0,
+    "time_limit_s": 180.0,
+    "missed_gate": "must_retry",
+    "on_collision": "respawn_at_last_gate",
+    "respawn_delay_s": 2.0,
+    "collision_penalty_s": 0.0
+  },
+
+  "spawn_points": [
+    { "slot": 0, "position": [-3.0, -1.5, 0.1], "rpy_deg": [0.0, 0.0, 0.0] },
+    { "slot": 1, "position": [-3.0,  0.0, 0.1], "rpy_deg": [0.0, 0.0, 0.0] },
+    { "slot": 2, "position": [-3.0,  1.5, 0.1], "rpy_deg": [0.0, 0.0, 0.0] }
+  ],
+
+  "obstacles": [
+    {
+      "id": "divider_wall",
+      "tag": "wall",
+      "position": [6.0, 9.0, 1.5],
+      "rpy_deg": [0.0, 0.0, 0.0],
+      "visual": { "prefab": "wall_concrete" , "scale": [0.2, 6.0, 3.0] },
+      "collision": [
+        { "shape": "box", "offset": [0.0, 0.0, 0.0], "size": [0.2, 6.0, 3.0] }
+      ]
+    },
+    {
+      "id": "pillar_1",
+      "tag": "pillar",
+      "position": [15.0, 4.0, 4.0],
+      "rpy_deg": [0.0, 0.0, 0.0],
+      "visual": { "prefab": "pillar_steel", "scale": [0.8, 0.8, 8.0] },
+      "collision": [
+        { "shape": "cylinder", "offset": [0.0, 0.0, 0.0], "radius": 0.4, "height": 8.0 }
+      ]
+    },
+    {
+      "id": "tree_1",
+      "tag": "tree",
+      "position": [22.0, 14.0, 0.0],
+      "rpy_deg": [0.0, 0.0, 40.0],
+      "visual": { "prefab": "tree_pine_01", "scale": [1.0, 1.0, 1.0] },
+      "collision": [
+        { "shape": "cylinder", "offset": [0.0, 0.0, 1.5], "radius": 0.2, "height": 3.0 },
+        { "shape": "sphere",   "offset": [0.0, 0.0, 4.0], "radius": 1.6 }
+      ]
+    },
+    {
+      "id": "tree_2",
+      "tag": "tree",
+      "position": [-10.0, 0.0, 0.0],
+      "rpy_deg": [0.0, 0.0, 0.0],
+      "visual": { "prefab": "tree_oak_01", "scale": [1.2, 1.2, 1.2] },
+      "collision": [
+        { "shape": "cylinder", "offset": [0.0, 0.0, 1.8], "radius": 0.3, "height": 3.6 },
+        { "shape": "sphere",   "offset": [0.0, 0.0, 4.8], "radius": 2.2 }
+      ]
+    },
+    {
+      "id": "tree_3",
+      "tag": "tree",
+      "position": [-9.0, 15.0, 0.0],
+      "rpy_deg": [0.0, 0.0, 110.0],
+      "visual": { "prefab": "tree_pine_01", "scale": [0.9, 0.9, 0.9] },
+      "collision": [
+        { "shape": "cylinder", "offset": [0.0, 0.0, 1.35], "radius": 0.18, "height": 2.7 },
+        { "shape": "sphere",   "offset": [0.0, 0.0, 3.6],  "radius": 1.45 }
+      ]
+    }
+  ],
+
+  "keep_out_zones": [
+    {
+      "id": "pilot_area",
+      "_note": "Crash in sim; geofence on real hardware.",
+      "shape": "box",
+      "position": [-8.0, -4.0, 2.0],
+      "rpy_deg": [0.0, 0.0, 0.0],
+      "size": [4.0, 3.0, 4.0]
+    }
+  ],
+
+  "wind": {
+    "enabled": true,
+    "seed": 42,
+    "air_density": 1.225,
+    "global": {
+      "mean_mps": [1.0, 0.5, 0.0],
+      "gust_model": "ornstein_uhlenbeck",
+      "sigma_mps": [0.6, 0.6, 0.2],
+      "tau_s": [2.0, 2.0, 1.0]
+    },
+    "altitude_layers": [
+      { "z_min": 0.0, "z_max": 1.0, "scale": 0.4 },
+      { "z_min": 1.0, "z_max": 3.0, "scale": 0.8 },
+      { "z_min": 3.0, "z_max": 8.0, "scale": 1.0 }
+    ],
+    "zones": [
+      {
+        "id": "fan_near_G2",
+        "shape": "cylinder",
+        "position": [18.0, 12.5, 2.5],
+        "rpy_deg": [0.0, 90.0, 0.0],
+        "radius": 1.5,
+        "height": 5.0,
+        "velocity_mps": [-4.0, 0.0, 0.0],
+        "mode": "additive",
+        "falloff": "linear",
+        "falloff_distance_m": 1.0
+      }
+    ],
+    "events": [
+      {
+        "id": "crosswind_gust",
+        "type": "one_minus_cosine",
+        "start_s": 20.0,
+        "duration_s": 2.0,
+        "peak_mps": [0.0, 3.0, 0.0]
+      }
+    ]
+  },
+
+  "estimator_map": {
+    "_note": "Noise applied to gate poses before the autonomy stack sees them, so it never gets the exact map.",
+    "position_sigma_m": 0.10,
+    "yaw_sigma_deg": 2.0
+  },
+
+  "environment": {
+    "skybox": "indoor_warehouse",
+    "lighting": { "preset": "overhead_fluorescent", "intensity": 1.0 }
+  },
+
+  "randomization": {
+    "_note": "Applied per episode or per race when enabled; ignored in fixed game mode.",
+    "enabled": false,
+    "gate_position_jitter_m": 0.3,
+    "gate_yaw_jitter_deg": 10.0,
+    "wind_mean_scale": [0.0, 2.0],
+    "wind_sigma_scale": [0.5, 2.0],
+    "light_intensity": [0.5, 1.5],
+    "gate_materials": ["gate_orange", "gate_checker", "gate_led_blue"],
+    "floor_materials": ["concrete_floor", "rubber_mat", "painted_lines"]
+  }
+}
+
